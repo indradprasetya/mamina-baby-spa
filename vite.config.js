@@ -4,12 +4,22 @@ import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
-        }),
-        vue(),
-        tailwindcss(),
-    ],
+  plugins: [
+    laravel({
+        input: ['resources/css/app.css', 'resources/js/app.js'],
+        refresh: true,
+    }),
+    vue(),
+    tailwindcss(),
+  ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined, // Disable automatic chunk splitting
+        entryFileNames: 'js/app.js',
+        assetFileNames: 'css/app.[ext]'
+      }
+    }
+  }
 });
+

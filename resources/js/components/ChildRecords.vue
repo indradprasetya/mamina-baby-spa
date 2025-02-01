@@ -65,7 +65,8 @@
         </div>
 
         <!-- Table for displaying data -->
-        <table class="w-full mt-6 border-collapse border border-gray-300">
+        <div v-if="loading" class="text-center py-4">Loading...</div>
+        <table v-else class="w-full mt-6 border-collapse border border-gray-300">
             <thead>
                 <tr class="bg-gray-200">
                     <th class="border p-2">Name</th>
@@ -73,8 +74,7 @@
                     <th class="border p-2">Weight</th>
                     <th class="border p-2">Height</th>
                     <th class="border p-2">Notes</th>
-                    <th class="border p-2"> </th>
-
+                    <th class="border p-2"></th>
                 </tr>
             </thead>
             <tbody>
@@ -117,46 +117,78 @@ export default {
                 height: "",
                 notes: "",
             },
+            loading: false,
         };
     },
     methods: {
         async fetchChildren() {
-            const response = await axios.get("/api/children");
-            this.children = response.data;
+            this.loading = true;
+            try {
+                const response = await axios.get("/api/children");
+                this.children = response.data;
+            } catch (error) {
+                alert("Failed to fetch data. Please try again.");
+            } finally {
+                this.loading = false;
+            }
         },
 
         async addChild() {
-            await axios.post("/api/children", this.form, {
-                headers: {
-                    "Content-Type": "application/json", // Untuk format JSON
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"), // Ambil CSRF token dari meta tag
-                },
-            });
-            this.fetchChildren();
-            this.showModal = false;
-            this.form = {
-                name: "",
-                birth_date: "",
-                weight: "",
-                height: "",
-                notes: "",
-            };
-        },
+            if (
+                !this.form.name ||
+                !this.form.birth_date ||
+                !this.form.weight ||
+                !this.form.height
+            ) {
+                alert("Please fill all required fields!");
+                return;
+            }
 
-        async deleteChild(id) {
-            if (confirm("Are you sure you want to delete this record?")) {
-                await axios.delete(`/api/children/${id}`, {
+            if (this.form.weight <= 0 || this.form.height <= 0) {
+                alert("Weight and height must be positive numbers!");
+                return;
+            }
+
+            try {
+                await axios.post("/api/children", this.form, {
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": document
                             .querySelector('meta[name="csrf-token"]')
-                            .getAttribute("content"), // CSRF token
+                            .getAttribute("content"),
                     },
                 });
+                this.fetchChildren();
+                this.showModal = false;
+                this.form = {
+                    name: "",
+                    birth_date: "",
+                    weight: "",
+                    height: "",
+                    notes: "",
+                };
+                alert("Child added successfully!");
+            } catch (error) {
+                alert("Failed to add child. Please try again.");
+            }
+        },
 
-                this.fetchChildren(); // Update data setelah berhasil dihapus
+        async deleteChild(id) {
+            if (confirm("Are you sure you want to delete this record?")) {
+                try {
+                    await axios.delete(`/api/children/${id}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document
+                                .querySelector('meta[name="csrf-token"]')
+                                .getAttribute("content"),
+                        },
+                    });
+                    this.fetchChildren();
+                    alert("Child deleted successfully!");
+                } catch (error) {
+                    alert("Failed to delete child. Please try again.");
+                }
             }
         },
     },
