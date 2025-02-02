@@ -1,11 +1,12 @@
 <template>
-    <div class="p-6">
-        <h1 class="text-2xl font-bold mb-4">Child Records</h1>
+    <div class="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
+        <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+            Child Records
+        </h1>
 
-        <!-- Button for adding new data -->
         <button
             @click="showModal = true"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
         >
             Add Child
         </button>
@@ -65,40 +66,56 @@
         </div>
 
         <!-- Table for displaying data -->
-        <div v-if="loading" class="text-center py-4">Loading...</div>
-        <table v-else class="w-full mt-6 border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border p-2">Name</th>
-                    <th class="border p-2">Birth Date</th>
-                    <th class="border p-2">Weight</th>
-                    <th class="border p-2">Height</th>
-                    <th class="border p-2">Notes</th>
-                    <th class="border p-2"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="child in children"
-                    :key="child.id"
-                    class="text-center"
+        <div
+            v-if="loading"
+            class="text-2xl font-bold mb-4 text-gray-900 dark:text-white"
+        >
+            Loading...
+        </div>
+        <div v-else class="overflow-x-auto">
+            <table
+                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+            >
+                <thead
+                    class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
                 >
-                    <td class="border p-2">{{ child.name }}</td>
-                    <td class="border p-2">{{ child.birth_date }}</td>
-                    <td class="border p-2">{{ child.weight }} kg</td>
-                    <td class="border p-2">{{ child.height }} cm</td>
-                    <td class="border p-2">{{ child.notes || "-" }}</td>
-                    <td class="border p-2">
-                        <button
-                            @click="deleteChild(child.id)"
-                            class="bg-red-500 text-white px-4 py-1 rounded"
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Name</th>
+                        <th scope="col" class="px-6 py-3">Birth Date</th>
+                        <th scope="col" class="px-6 py-3">Weight</th>
+                        <th scope="col" class="px-6 py-3">Height</th>
+                        <th scope="col" class="px-6 py-3">Notes</th>
+                        <th scope="col" class="px-6 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="child in children"
+                        :key="child.id"
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                    >
+                        <td
+                            scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            {{ child.name }}
+                        </td>
+                        <td class="px-6 py-4">{{ child.birth_date }}</td>
+                        <td class="px-6 py-4">{{ child.weight }} kg</td>
+                        <td class="px-6 py-4">{{ child.height }} cm</td>
+                        <td class="px-6 py-4">{{ child.notes || "-" }}</td>
+                        <td class="px-6 py-4">
+                            <button
+                                @click="deleteChild(child.id)"
+                                class="bg-red-500 text-white px-4 py-1 rounded"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 

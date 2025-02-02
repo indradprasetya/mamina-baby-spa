@@ -1,4 +1,5 @@
 import './bootstrap';
+import 'flowbite';
 
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
 import Example from './components/Example.vue';
